@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4-Bit Digital Locker</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #081525;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.locker {
+    width: 90%;
+    max-width: 430px;
+    padding: 30px;
+    background: #13263c;
+    border: 1px solid #285078;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 10px 40px #0008;
+}
+
+h1 {
+    color: #42d9ff;
+    font-size: 25px;
+}
+
+.subtitle {
+    color: #a9bfd4;
+    font-size: 14px;
+}
+
+.display {
+    margin: 25px 0;
+    padding: 18px;
+    background: #06111e;
+    border-radius: 10px;
+    font-size: 30px;
+    letter-spacing: 12px;
+    color: #42ffad;
+}
+
+.switches {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 25px 0;
+}
+
+.bit {
+    width: 60px;
+    height: 60px;
+    border: none;
+    border-radius: 10px;
+    background: #31465e;
+    color: white;
+    font-size: 23px;
+    cursor: pointer;
+}
+
+.bit.on {
+    background: #087f70;
+    box-shadow: 0 0 15px #00e5ae55;
+}
+
+button.action {
+    padding: 12px 22px;
+    margin: 7px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.unlock-btn {
+    background: #00d6a0;
+    color: #061525;
+}
+
+.reset-btn {
+    background: #52677e;
+    color: white;
+}
+
+.status {
+    margin-top: 22px;
+    padding: 14px;
+    border-radius: 9px;
+    background: #263b50;
+    font-weight: bold;
+}
+
+.success {
+    background: #075b43;
+    color: #7affc8;
+}
+
+.error {
+    background: #672a36;
+    color: #ff9ca8;
+}
+
+.logic {
+    margin-top: 22px;
+    padding: 14px;
+    background: #0b1b2c;
+    border-radius: 10px;
+    color: #b7cce0;
+    font-size: 13px;
+    text-align: left;
+}
+</style>
+</head>
+
+<body>
+
+<div class="locker">
+
+<h1>🔐 DIGITAL LOCKER</h1>
+<p class="subtitle">4-Bit Password Verification System</p>
+
+<p>ENTER YOUR 4-BIT PASSWORD</p>
+
+<div class="display" id="display">0000</div>
+
+<div class="switches">
+    <button class="bit" onclick="toggleBit(0)">0</button>
+    <button class="bit" onclick="toggleBit(1)">0</button>
+    <button class="bit" onclick="toggleBit(2)">0</button>
+    <button class="bit" onclick="toggleBit(3)">0</button>
+</div>
+
+<button class="action unlock-btn" onclick="verifyPassword()">
+    VERIFY PASSWORD
+</button>
+
+<button class="action reset-btn" onclick="resetLocker()">
+    RESET
+</button>
+
+<div class="status" id="status">
+    🔒 LOCKED – WAITING FOR INPUT
+</div>
+
+<div class="logic">
+    <b>LOGIC SYSTEM</b>
+    <p>Stored Password: 1010</p>
+    <p id="comparison">A = 0 | B = 0 | C = 0 | D = 0</p>
+    <p id="logic">Comparator: WAITING</p>
+    <p id="output">UNLOCK = 0 | ERROR = 0</p>
+</div>
+
+</div>
+
+<script>
+let bits = [0, 0, 0, 0];
+
+function updateDisplay() {
+    document.getElementById("display").textContent =
+        bits.join("");
+
+    document.querySelectorAll(".bit").forEach((button, i) => {
+        button.textContent = bits[i];
+        button.classList.toggle("on", bits[i] === 1);
+    });
+
+    document.getElementById("comparison").textContent =
+        "A = " + bits[0] + " | B = " + bits[1] +
+        " | C = " + bits[2] + " | D = " + bits[3];
+}
+
+function toggleBit(index) {
+    bits[index] = bits[index] === 0 ? 1 : 0;
+    resetStatus();
+    updateDisplay();
+}
+
+function verifyPassword() {
+    const entered = bits.join("");
+    const correct = "1010";
+
+    const match = entered === correct;
+
+    const status = document.getElementById("status");
+
+    status.className = "status " + (match ? "success" : "error");
+
+    status.textContent = match
+        ? "🔓 ACCESS GRANTED – LOCK OPEN"
+        : "🚫 ACCESS DENIED – LOCKED";
+
+    document.getElementById("logic").textContent =
+        match ? "Comparator: MATCH (1)" :
+                "Comparator: NOT MATCH (0)";
+
+    document.getElementById("output").textContent =
+        "UNLOCK = " + (match ? 1 : 0) +
+        " | ERROR = " + (match ? 0 : 1);
+}
+
+function resetStatus() {
+    const status = document.getElementById("status");
+    status.className = "status";
+    status.textContent = "🔒 LOCKED – WAITING FOR INPUT";
+
+    document.getElementById("logic").textContent =
+        "Comparator: WAITING";
+
+    document.getElementById("output").textContent =
+        "UNLOCK = 0 | ERROR = 0";
+}
+
+function resetLocker() {
+    bits = [0, 0, 0, 0];
+    resetStatus();
+    updateDisplay();
+}
+
+updateDisplay();
+</script>
+
+</body>
+</html>
